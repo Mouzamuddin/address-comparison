@@ -188,27 +188,32 @@ export default function AddressComparisonApp() {
   const [error, setError] = useState('');
 
   const handleCompare = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const response = await fetch('/api/compare-addresses', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address1, address2 }),
-      });
+  setLoading(true);
+  setError('');
+  try {
+    const response = await fetch('/api/compare-addresses', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address1, address2 }),
+    });
 
-      if (!response.ok) {
-        throw new Error('Failed to compare addresses');
-      }
-
-      const data = await response.json();
-      setResult(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    if (!response.ok) {
+      throw new Error('Failed to compare addresses');
     }
-  };
+
+    const data = await response.json();
+    setResult(data);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      setError(err.message); // Now, you can safely access 'message' property
+    } else {
+      setError('An unknown error occurred');
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 p-4 md:p-8">
